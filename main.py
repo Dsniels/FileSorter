@@ -31,7 +31,7 @@ def inicio():
         img = ('.png', '.jpeg', '.jpg', '.gif', '.svg', '.ico')
         doc = ('.doc', '.txt', '.docx')
         pdf = ('.pdf')
-        Pp = ('.ppt', '.pptx', '.pps')
+        Pp = ('.ppt', '.pptx', '.pps', '.ppsx')
         exl = ('.xls', '.xlsx')
         com = ('.zip', '.rar')
         app = ('.exe')
