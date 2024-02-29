@@ -1,10 +1,7 @@
-from genericpath import isfile
 import os
-from pydoc import doc
 from shutil import move
 from pathlib import Path
-from turtle import st
-from unratedwriting import typewrite
+from win11toast import toast
 
 
 user_home = os.path.expanduser('~')
@@ -19,7 +16,7 @@ exl_dir = os.path.join(root, 'Excel')
 Pp_dir = os.path.join(root, 'Presentaciones')
 app_dir = os.path.join(root, 'Ejecutables')
 other = os.path.join(root, 'OtrosArchivos')
-vid = ('.mp3', 'mkv', '.mov', '.m4a')
+vid = ('.mp3', 'mkv', '.mov', '.m4a', '.mp4')
 img = ('.png', '.jpeg', '.jpg', '.gif', '.svg', '.ico')
 doc = ('.doc', '.txt', '.docx')
 pdf = ('.pdf')
@@ -27,6 +24,15 @@ Pp = ('.ppt', '.pptx', '.pps', '.ppsx')
 exl = ('.xls', '.xlsx')
 com = ('.zip', '.rar')
 app = ('.exe')
+vidLen = 0
+picLen = 0
+docLen = 0
+pdfLen = 0
+PpLen = 0
+exlLen = 0
+compLen = 0
+appLen = 0
+otherLen = 0
 files = []
 def renombrar(src, filed, dst):
     filename, file_extension = os.path.splitext(filed)
@@ -51,17 +57,9 @@ def list_files():
             continue
         files.append(f)
 
-    vidLen = 0
-    picLen = 0
-    docLen = 0
-    pdfLen = 0
-    PpLen = 0
-    exlLen = 0
-    compLen = 0
-    appLen = 0
-    otherLen = 0
 
 def ordenar():
+    global vidLen,docLen,pdfLen,PpLen,compLen,picLen,exlLen,appLen,otherLen
     for file in files:
 
         try:
@@ -113,11 +111,12 @@ def ordenar():
             else:
                 renombrar(os.path.join(root, file),file, other)
             continue
+    toast('Se ordenaron las descargas')
 
 def crear_folders():
     for folder in [video_dir, img_dir, doc_dir, zip_dir, pdf_dir, exl_dir, Pp_dir, app_dir, other]:
         if not os.path.exists(folder):
-            print(f'Creando folder: {folder}....')
+            toast(f'Creando folder: {folder}....')
             os.mkdir(folder)
 
 
