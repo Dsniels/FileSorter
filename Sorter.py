@@ -1,8 +1,7 @@
-import os
+import os, time
 from shutil import move
 from pathlib import Path
 from win11toast import toast
-
 
 user_home = os.path.expanduser('~')
 descargas_dir = 'Downloads'
@@ -122,10 +121,23 @@ def crear_folders():
 
 def inicio():
 
-    crear_folders()
-    list_files()
-    ordenar()
-    return 1
+
+    while True:
+        list_files()
+        if len(files) >= 1:
+            try:
+                crear_folders() 
+                ordenar()
+            except OSError as e:
+                toast(f'Error: {e}')
+                toast('Verificando problemas.....')
+                time.sleep(500)
+            finally:
+                files.clear()
+            
+        time.sleep(250)
+
+    
 
 
 inicio()
