@@ -1,39 +1,43 @@
+from collections.abc import Sequence
 import os, time
 from shutil import move
 from pathlib import Path
+from typing import Literal
 from win11toast import toast
 
-user_home = os.path.expanduser('~')
-descargas_dir = 'Downloads'
-root = os.path.join(user_home, descargas_dir)
-video_dir = os.path.join(root, 'Videos')
-img_dir = os.path.join(root, 'Imagenes')
-doc_dir = os.path.join(root, 'Documentos')
-pdf_dir = os.path.join(root, 'Pdf')
-zip_dir = os.path.join(root, 'Zip')
-exl_dir = os.path.join(root, 'Excel')
-Pp_dir = os.path.join(root, 'Presentaciones')
-app_dir = os.path.join(root, 'Ejecutables')
-other = os.path.join(root, 'OtrosArchivos')
-vid = ('.mp3', 'mkv', '.mov', '.m4a', '.mp4')
-img = ('.png', '.jpeg', '.jpg', '.gif', '.svg', '.ico')
-doc = ('.doc', '.txt', '.docx')
-pdf = ('.pdf')
-Pp = ('.ppt', '.pptx', '.pps', '.ppsx')
-exl = ('.xls', '.xlsx')
-com = ('.zip', '.rar')
-app = ('.exe')
-vidLen = 0
-picLen = 0
-docLen = 0
-pdfLen = 0
-PpLen = 0
-exlLen = 0
-compLen = 0
-appLen = 0
-otherLen = 0
-files = []
-def renombrar(src, filed, dst):
+user_home: str = os.path.expanduser('~')
+descargas_dir: str = 'Downloads'
+root: str = os.path.join(user_home, descargas_dir)
+video_dir : str = os.path.join(root, 'Videos')
+img_dir : str = os.path.join(root, 'Imagenes')
+doc_dir : str = os.path.join(root, 'Documentos')
+pdf_dir : str = os.path.join(root, 'Pdf')
+zip_dir : str = os.path.join(root, 'Zip')
+exl_dir : str = os.path.join(root, 'Excel')
+Pp_dir : str = os.path.join(root, 'Presentaciones')
+app_dir : str = os.path.join(root, 'Ejecutables')
+other : str = os.path.join(root, 'OtrosArchivos')
+vid: tuple[str, ...] = ('.mp3', 'mkv', '.mov', '.m4a', '.mp4')
+img: tuple[str, ...] = ('.png', '.jpeg', '.jpg', '.gif', '.svg', '.ico')
+doc: tuple[str, ...] = ('.doc', '.txt', '.docx')
+pdf: Literal['.pdf'] = ('.pdf')
+Pp: tuple[str, ...] = ('.ppt', '.pptx', '.pps', '.ppsx')
+exl: tuple[str, ...] = ('.xls', '.xlsx')
+com: tuple[str, ...] = ('.zip', '.rar')
+app: Literal['.exe'] = ('.exe')
+vidLen:int = 0
+picLen:int = 0
+docLen:int = 0
+pdfLen:int = 0
+PpLen:int = 0
+exlLen:int = 0
+compLen:int = 0
+appLen:int = 0
+otherLen:int = 0
+files:list[str] = []
+dirs: list[str] = [video_dir, img_dir, doc_dir, pdf_dir, zip_dir, exl_dir, Pp_dir, app_dir, other]
+
+def renombrar(src: str, filed: str, dst: str ) -> None:
     filename, file_extension = os.path.splitext(filed)
     count = 1
     new_filename = filename + str(count) + file_extension
@@ -45,19 +49,17 @@ def renombrar(src, filed, dst):
 
     os.rename(src, os.path.join(dst,new_filename))
 
-def list_files():
 
 
-    for f in os.listdir(root):
-        if not f.startswith('.') and not f.__eq__(__file__):
-            # Verificar si f es una carpeta que debe ser ignorada
-            folder_path = os.path.join(root, f)
-        if folder_path in [video_dir, img_dir, doc_dir, pdf_dir, zip_dir, exl_dir, Pp_dir, app_dir, other]:
-            continue
-        files.append(f)
+def list_files() -> list[str]:
 
 
-def ordenar():
+    return [f for f in os.listdir(root)  
+                        if not f.startswith('.') and not f == __file__
+                        and os.path.join(root,f) not in dirs]
+
+
+def ordenar()->None:
     global vidLen,docLen,pdfLen,PpLen,compLen,picLen,exlLen,appLen,otherLen
     for file in files:
 
@@ -112,32 +114,36 @@ def ordenar():
             continue
     toast('Se ordenaron las descargas')
 
-def crear_folders():
+def crear_folders()->None:
     for folder in [video_dir, img_dir, doc_dir, zip_dir, pdf_dir, exl_dir, Pp_dir, app_dir, other]:
         if not os.path.exists(folder):
             toast(f'Creando folder: {folder}....')
             os.mkdir(folder)
 
 
-def inicio():
+def checar_y_organizar()->None:
 
-
-    while True:
-        list_files()
-        if len(files) >= 1:
-            try:
-                crear_folders() 
-                ordenar()
-            except OSError as e:
-                toast(f'Error: {e}')
-                toast('Verificando problemas.....')
-                time.sleep(500)
-            finally:
-                files.clear()
-            
-        time.sleep(250)
+    crear_folders()
+    list_files()
+    
+    if len(files) >= 1:
+        try:
+            ordenar()
+        except OSError as e:
+            toast(f'Error: {e}')
+            time.sleep(500)            
+        finally: 
+            files.clear()
 
     
 
 
-inicio()
+def inicio()->None:
+    while True:
+        checar_y_organizar()
+        time.sleep(250)
+
+
+if __name__ == "__main__":
+    inicio()
+
